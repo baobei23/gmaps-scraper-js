@@ -60,4 +60,4 @@ temp.js
 db.nedb
 botasaurus_storage.json
 
-/.cursor/
+.cursor
