@@ -4,29 +4,30 @@ import { gotScraping } from 'got-scraping';
 interface ExtractedInfo {
   nama: string | null;
   alamat: string | null;
+  telepon: string | null;
 }
 
 function extractTitle(html: string): ExtractedInfo {
   try {
     // Ambil JSON APP_INITIALIZATION_STATE
     const splitByInit = html.split(';window.APP_INITIALIZATION_STATE=');
-    if (splitByInit.length < 2) return { nama: null, alamat: null };
+    if (splitByInit.length < 2) return { nama: null, alamat: null, telepon: null };
 
     const jsonString = splitByInit[1].split(';window.APP_FLAGS')[0];
     const outerArr = JSON.parse(jsonString);
 
     const rawData: string | undefined = outerArr?.[3]?.[6];
-    if (!rawData || typeof rawData !== 'string') return { nama: null, alamat: null };
+    if (!rawData || typeof rawData !== 'string') return { nama: null, alamat: null, telepon: null };
 
     const cleaned = rawData.startsWith(")]}'") ? rawData.slice(5) : rawData;
     const parsedData = JSON.parse(cleaned);
 
     const nama = parsedData?.[6]?.[11] ?? null;
     const alamat = parsedData?.[6]?.[39] ?? null;
-
-    return { nama, alamat };
+    const telepon = parsedData?.[6]?.[178]?.[0]?.[3] ?? null;
+    return { nama, alamat, telepon };
   } catch {
-    return { nama: null, alamat: null };
+    return { nama: null, alamat: null, telepon: null };
   }
 }
 
@@ -99,8 +100,8 @@ const scrapeGoogleMaps = playwright<any>({
               timeout: { request: 12000 },
               retry: { limit: 5 },
             });
-            const { nama, alamat } = extractTitle(response.body);
-            return { link: placeLink, nama, alamat };
+            const { nama, alamat, telepon } = extractTitle(response.body);
+            return { link: placeLink, nama, alamat, telepon };
           } catch (error: any) {
             return { link: placeLink, error: error.message };
           }
