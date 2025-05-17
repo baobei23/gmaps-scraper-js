@@ -6,19 +6,20 @@ interface ExtractedInfo {
   alamat: string | null;
   telepon: string | null;
   kategori: string[];
+  pemilik: string | null;
 }
 
 function extractTitle(html: string): ExtractedInfo {
   try {
     // Ambil JSON APP_INITIALIZATION_STATE
     const splitByInit = html.split(';window.APP_INITIALIZATION_STATE=');
-    if (splitByInit.length < 2) return { nama: null, alamat: null, telepon: null, kategori: [] };
+    if (splitByInit.length < 2) return { nama: null, alamat: null, telepon: null, kategori: [], pemilik: null };
 
     const jsonString = splitByInit[1].split(';window.APP_FLAGS')[0];
     const outerArr = JSON.parse(jsonString);
 
     const rawData: string | undefined = outerArr?.[3]?.[6];
-    if (!rawData || typeof rawData !== 'string') return { nama: null, alamat: null, telepon: null, kategori: [] };
+    if (!rawData || typeof rawData !== 'string') return { nama: null, alamat: null, telepon: null, kategori: [], pemilik: null };
 
     const cleaned = rawData.startsWith(")]}'") ? rawData.slice(5) : rawData;
     const parsedData = JSON.parse(cleaned);
@@ -27,9 +28,10 @@ function extractTitle(html: string): ExtractedInfo {
     const alamat = parsedData?.[6]?.[39] ?? null;
     const telepon = parsedData?.[6]?.[178]?.[0]?.[3] ?? null;
     const kategori = parsedData?.[6]?.[13] ?? [];
-    return { nama, alamat, telepon, kategori };
+    const pemilik = parsedData?.[6]?.[178]?.[0]?.[1] ?? null;
+    return { nama, alamat, telepon, kategori, pemilik };
   } catch {
-    return { nama: null, alamat: null, telepon: null, kategori: [] };
+    return { nama: null, alamat: null, telepon: null, kategori: [], pemilik: null };
   }
 }
 
@@ -102,8 +104,8 @@ const scrapeGoogleMaps = playwright<any>({
               timeout: { request: 12000 },
               retry: { limit: 5 },
             });
-            const { nama, alamat, telepon, kategori } = extractTitle(response.body);
-            return { link: placeLink, nama, alamat, telepon, kategori };
+            const { nama, alamat, telepon, kategori, pemilik } = extractTitle(response.body);
+            return { nama, alamat, telepon, kategori, pemilik, link: placeLink};
           } catch (error: any) {
             return { link: placeLink, error: error.message };
           }
