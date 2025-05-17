@@ -28,7 +28,7 @@ function extractTitle(html: string): ExtractedInfo {
     const alamat = parsedData?.[6]?.[39] ?? null;
     const telepon = parsedData?.[6]?.[178]?.[0]?.[3] ?? null;
     const kategori = parsedData?.[6]?.[13] ?? [];
-    const pemilik = parsedData?.[6]?.[178]?.[0]?.[1] ?? null;
+    const pemilik = parsedData?.[6]?.[57]?.[1] ?? null;
     return { nama, alamat, telepon, kategori, pemilik };
   } catch {
     return { nama: null, alamat: null, telepon: null, kategori: [], pemilik: null };
