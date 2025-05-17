@@ -67,8 +67,7 @@ const scrapeGoogleMaps = playwright<any>({
       return (await page.$('p.fontBodyMedium > span > span')) !== null;
     };
 
-    // 2. Scroll and collect links
-    let safetyCounter = 0;
+    // 2. Scroll and collect linkss
     while (true) {
       await extractLinks();
 
@@ -81,7 +80,6 @@ const scrapeGoogleMaps = playwright<any>({
       await page.waitForTimeout(500);
 
       if (await hasReachedEnd()) break;
-      if (++safetyCounter > 30) break; // fallback guard
     }
 
     // 3. Prepare HTTP cookies for got-scraping requests
