@@ -38,6 +38,7 @@ function extractTitle(html: string): ExtractedInfo {
 const scrapeGoogleMaps = playwright<any>({
   headless: true,
   reuseDriver: true,
+  output: null,
   name: 'scrapeGoogleMaps',
   run: async ({ data, page }) => {
     const searchLink: string = data['link'];
