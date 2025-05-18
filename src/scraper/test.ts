@@ -6,7 +6,7 @@ import { scrapeGoogleMaps } from './src/scraper';
 
 async function main() {
   console.log(
-    await scrapeGoogleMaps({ link: 'https://stackoverflow.blog/open-source' }),
+    await scrapeGoogleMaps({ link: 'https://maps.google.com' }),
   );
 }
 

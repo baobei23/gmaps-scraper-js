@@ -4,34 +4,38 @@ import { gotScraping } from 'got-scraping';
 interface ExtractedInfo {
   nama: string | null;
   alamat: string | null;
+  website: string | null;
   telepon: string | null;
   kategori: string[];
+  klaim: boolean;
   pemilik: string | null;
 }
 
-function extractTitle(html: string): ExtractedInfo {
+function extractData(html: string): ExtractedInfo {
   try {
     // Ambil JSON APP_INITIALIZATION_STATE
     const splitByInit = html.split(';window.APP_INITIALIZATION_STATE=');
-    if (splitByInit.length < 2) return { nama: null, alamat: null, telepon: null, kategori: [], pemilik: null };
+    if (splitByInit.length < 2) return { nama: null, alamat: null, website: null, telepon: null, kategori: [], klaim: false, pemilik: null };
 
     const jsonString = splitByInit[1].split(';window.APP_FLAGS')[0];
     const outerArr = JSON.parse(jsonString);
 
     const rawData: string | undefined = outerArr?.[3]?.[6];
-    if (!rawData || typeof rawData !== 'string') return { nama: null, alamat: null, telepon: null, kategori: [], pemilik: null };
+    if (!rawData || typeof rawData !== 'string') return { nama: null, alamat: null, website: null, telepon: null, kategori: [], klaim: false, pemilik: null };
 
     const cleaned = rawData.startsWith(")]}'") ? rawData.slice(5) : rawData;
     const parsedData = JSON.parse(cleaned);
 
     const nama = parsedData?.[6]?.[11] ?? null;
     const alamat = parsedData?.[6]?.[39] ?? null;
+    const website = parsedData?.[6]?.[7]?.[0] ?? null;
     const telepon = parsedData?.[6]?.[178]?.[0]?.[3] ?? null;
     const kategori = parsedData?.[6]?.[13] ?? [];
+    const klaim = parsedData?.[6]?.[49]?.[1] ? true : false;
     const pemilik = parsedData?.[6]?.[57]?.[1] ?? null;
-    return { nama, alamat, telepon, kategori, pemilik };
+    return { nama, alamat, website, telepon, kategori, klaim, pemilik };
   } catch {
-    return { nama: null, alamat: null, telepon: null, kategori: [], pemilik: null };
+    return { nama: null, alamat: null, website: null, telepon: null, kategori: [], klaim: false, pemilik: null };
   }
 }
 
@@ -63,7 +67,7 @@ const scrapeGoogleMaps = playwright<any>({
       links.forEach((l) => linkSet.add(l));
     };
 
-    // Helper to detect end of results (same selector logic as Python version)
+    // Helper to detect end of results
     const hasReachedEnd = async () => {
       return (await page.$('p.fontBodyMedium > span > span')) !== null;
     };
@@ -103,8 +107,8 @@ const scrapeGoogleMaps = playwright<any>({
               timeout: { request: 12000 },
               retry: { limit: 5 },
             });
-            const { nama, alamat, telepon, kategori, pemilik } = extractTitle(response.body);
-            return { nama, alamat, telepon, kategori, pemilik, link: placeLink};
+            const { nama, alamat, website, telepon, kategori, klaim, pemilik } = extractData(response.body);
+            return { nama, alamat, website, telepon, kategori, klaim, pemilik, link: placeLink};
           } catch (error: any) {
             return { link: placeLink, error: error.message };
           }
