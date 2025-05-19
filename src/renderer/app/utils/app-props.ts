@@ -11,8 +11,8 @@ export const appProps = {
         {
             "name": "Scrape Google Maps",
             "scraper_name": "scrapeGoogleMaps",
-            "input_js": "/**\n * @typedef {import('botasaurus-controls').Controls} Controls\n * @typedef {import('botasaurus-controls').FileTypes} FileTypes\n * \n */\n\n/**\n * @param {Controls} controls\n */\nfunction getInput(controls) {\n    controls\n        // Render a Link Input\n        .link('link', { isRequired: true, defaultValue: \"https://stackoverflow.blog/open-source\" })\n}\n",
-            "input_js_hash": "69fc72f1db61af05ec70a6f385e8591a",
+            "input_js": "/**\n * @typedef {import('botasaurus-controls').Controls} Controls\n * @typedef {import('botasaurus-controls').FileTypes} FileTypes\n * \n */\n\n/**\n * @param {Controls} controls\n */\nfunction getInput(controls) {\n    controls\n        // Render a Text Input for query\n        .text('query', { \n            isRequired: true, \n            label: 'Pencarian', \n            placeholder: 'Hotel di Padang',\n            defaultValue: \"Hotel di Padang\" \n        })\n}\n",
+            "input_js_hash": "03195d5b4416d034c075d5b8ba257e05",
             "filters": [],
             "sorts": [
                 {

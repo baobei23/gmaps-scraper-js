@@ -9,6 +9,11 @@
  */
 function getInput(controls) {
     controls
-        // Render a Link Input
-        .link('link', { isRequired: true, defaultValue: "https://stackoverflow.blog/open-source" })
+        // Render a Text Input for query
+        .text('query', { 
+            isRequired: true, 
+            label: 'Pencarian', 
+            placeholder: 'Hotel di Padang',
+            defaultValue: "Hotel di Padang" 
+        })
 }

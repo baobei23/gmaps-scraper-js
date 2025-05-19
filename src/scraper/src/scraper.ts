@@ -45,7 +45,11 @@ const scrapeGoogleMaps = playwright<any>({
   output: null,
   name: 'scrapeGoogleMaps',
   run: async ({ data, page }) => {
-    const searchLink: string = data['link'];
+    // Get the query from input data
+    const query: string = data['query'];
+    
+    // Construct Google Maps search URL from the query
+    const searchLink = `https://www.google.com/maps/search/${encodeURIComponent(query)}`;
 
     // 1. Open Google Maps search page
     await page.goto(searchLink, { waitUntil: 'domcontentloaded' });
