@@ -1,9 +1,9 @@
 export const appProps = {
-    "header_title": "Botasaurus",
-    "description": "Build Awesome Scrapers with Botasaurus, The All in One Scraping Framework.",
+    "header_title": "Gmaps Scraper",
+    "description": "Gmaps Scraper",
     "right_header": {
-        "text": "Love It? Star It! ★",
-        "link": "https://github.com/omkarcloud/botasaurus"
+        "text": "ogi",
+        "link": "https://github.com/baobei23"
     },
     "readme": "",
     "enable_cache": false,
