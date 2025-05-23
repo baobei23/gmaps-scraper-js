@@ -40,8 +40,7 @@ function extractData(html: string): ExtractedInfo {
 }
 
 const scrapeGoogleMaps = playwright<any>({
-  headless: true,
-  reuseDriver: true,
+  headless: false,
   output: null,
   name: 'scrapeGoogleMaps',
   run: async ({ data, page }) => {
@@ -86,9 +85,11 @@ const scrapeGoogleMaps = playwright<any>({
         if (feed) (feed as HTMLElement).scrollTo(0, feed.scrollHeight);
       }, FEED_SELECTOR);
 
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1250);
 
-      if (await hasReachedEnd()) break;
+      if (await hasReachedEnd()) {
+        await extractLinks();
+        break; }
     }
 
     // 3. Prepare HTTP cookies for got-scraping requests
