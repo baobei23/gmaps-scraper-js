@@ -144,7 +144,7 @@ const scrapeGoogleMaps = playwright<any>({
   headless: false,
   output: null,
   name: 'scrapeGoogleMaps',
-  reuseDriver: true, // Reuse the browser instance across multiple tasks
+  reuseDriver: false, 
   run: async ({ data, page }) => {
     // Prepare the queries to search
     let queriesToSearch: string[] = [];
