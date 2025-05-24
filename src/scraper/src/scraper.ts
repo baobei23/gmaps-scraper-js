@@ -85,7 +85,7 @@ const scrapeGoogleMaps = playwright<any>({
         if (feed) (feed as HTMLElement).scrollTo(0, feed.scrollHeight);
       }, FEED_SELECTOR);
 
-      await page.waitForTimeout(1250);
+      await page.waitForTimeout(1500);
 
       if (await hasReachedEnd()) {
         await extractLinks();
