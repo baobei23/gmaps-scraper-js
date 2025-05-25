@@ -42,6 +42,7 @@ function extractData(html: string): ExtractedInfo {
 const scrapeGoogleMaps = playwright<any>({
   headless: false,
   output: null,
+  reuseDriver: false,
   name: 'scrapeGoogleMaps',
   run: async ({ data, page }) => {
     // Get the query from input data
