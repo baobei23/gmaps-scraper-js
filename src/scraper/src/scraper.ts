@@ -117,7 +117,17 @@ const scrapeGoogleMaps = playwright<any>({
               retry: { limit: 5 },
             });
             const { nama, alamat, website, telepon, kategori, klaim, pemilik } = extractData(response.body);
-            return { nama, alamat, website, telepon, kategori, klaim, pemilik, link: placeLink};
+            return { 
+              nama, 
+              alamat, 
+              website, 
+              telepon, 
+              kategori, 
+              klaim, 
+              pemilik, 
+              link: placeLink,
+              query: query // Add the original query to track which search generated this result
+            };
           } catch (error: any) {
             return { link: placeLink, error: error.message };
           }
