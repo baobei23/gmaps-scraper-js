@@ -40,11 +40,21 @@ try {
 
 function splitTaskByQuery(data: any): any[] {
     let allQueries: string[] = [];
+    let categoriesToUse = [...googleMapsCategories]; // Start with all loaded categories
 
-    if (data.use_categories && data.category_location && googleMapsCategories.length > 0) {
+    if (data.use_categories && data.category_location && categoriesToUse.length > 0) {
         const location = data.category_location.trim();
-        if (location) {
-            allQueries = googleMapsCategories.map(category => `${category} di ${location}`);
+        
+        // Apply category limit if specified and valid
+        if (data.max_categories && typeof data.max_categories === 'number' && data.max_categories > 0) {
+            categoriesToUse = categoriesToUse.slice(0, data.max_categories);
+            console.log(`[SERVER] Limiting to first ${data.max_categories} categories. Using ${categoriesToUse.length} categories.`);
+        } else {
+            console.log(`[SERVER] Using all ${categoriesToUse.length} categories (no valid limit specified).`);
+        }
+
+        if (location && categoriesToUse.length > 0) {
+            allQueries = categoriesToUse.map(category => `${category} di ${location}`);
         }
     } else {
         const manualQueries = data.queries || [];
@@ -90,8 +100,8 @@ const gmapsFilters = [
 ];
 
 const gmapsSorts = [
-    new sorts.AlphabeticAscendingSort('nama'),
-    new sorts.AlphabeticDescendingSort('nama'),
+    new sorts.AlphabeticAscendingSort('kategori'),
+    new sorts.AlphabeticDescendingSort('kategori'),
 ];
 
 Server.addScraper(
@@ -102,7 +112,7 @@ Server.addScraper(
         getTaskName: getTaskName,
         filters: gmapsFilters,
         sorts: gmapsSorts,
-        views: [], // Pass views as an empty array to remove tabs
+        views: [], 
         removeDuplicatesBy: 'link', // Assuming 'link' is a unique identifier for place results
         // isGoogleChromeRequired:true, // Keep if playwright uses Chrome. Playwright can use others too.
     }

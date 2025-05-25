@@ -28,5 +28,14 @@ function getInput(controls) {
             isDisabled: (data) => !data.use_categories,
             disabledMessage: 'Diaktifkan hanya jika "Gunakan Pencarian Kategori" aktif.',
             helpText: 'Masukkan nama daerah (kota, provinsi, dll.).'
+        })
+        .number('max_categories', {
+            label: 'Batas Jumlah Kategori (opsional)',
+            placeholder: 'misalnya, 100',
+            helpText: 'Batasi jumlah kategori yang akan digunakan untuk pencarian. Biarkan kosong untuk menggunakan semua kategori.',
+            min: 1,
+            isShown: (data) => data.use_categories,
+            isDisabled: (data) => !data.use_categories,
+            isRequired: false
         });
 }
