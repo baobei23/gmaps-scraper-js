@@ -40,7 +40,7 @@ function extractData(html: string): ExtractedInfo {
 }
 
 const scrapeGoogleMaps = playwright<any>({
-  headless: false,
+  headless: true,
   output: null,
   reuseDriver: false,
   name: 'scrapeGoogleMaps',
