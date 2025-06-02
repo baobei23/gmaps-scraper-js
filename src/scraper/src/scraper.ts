@@ -106,6 +106,13 @@ const scrapeGoogleMaps = playwright<any>({
     } catch {}
 
     const FEED_SELECTOR = '[role="feed"]';
+
+    // Check if the feed element exists
+    const feedElement = await page.$(FEED_SELECTOR);
+    if (!feedElement) {
+      return []; // Return an empty array if the feed element is not found
+    }
+
     const linkSet = new Set<string>();
 
     // Helper to extract all place links currently in the DOM
