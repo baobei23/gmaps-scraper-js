@@ -9,19 +9,43 @@ interface ExtractedInfo {
   kategori: string[];
   klaim: boolean;
   pemilik: string | null;
+  latitude: string | null;
+  longitude: string | null;
 }
 
 function extractData(html: string): ExtractedInfo {
   try {
     // Ambil JSON APP_INITIALIZATION_STATE
     const splitByInit = html.split(';window.APP_INITIALIZATION_STATE=');
-    if (splitByInit.length < 2) return { nama: null, alamat: null, website: null, telepon: null, kategori: [], klaim: false, pemilik: null };
+    if (splitByInit.length < 2)
+      return {
+        nama: null,
+        alamat: null,
+        website: null,
+        telepon: null,
+        kategori: [],
+        klaim: false,
+        pemilik: null,
+        latitude: null,
+        longitude: null,
+      };
 
     const jsonString = splitByInit[1].split(';window.APP_FLAGS')[0];
     const outerArr = JSON.parse(jsonString);
 
     const rawData: string | undefined = outerArr?.[3]?.[6];
-    if (!rawData || typeof rawData !== 'string') return { nama: null, alamat: null, website: null, telepon: null, kategori: [], klaim: false, pemilik: null };
+    if (!rawData || typeof rawData !== 'string')
+      return {
+        nama: null,
+        alamat: null,
+        website: null,
+        telepon: null,
+        kategori: [],
+        klaim: false,
+        pemilik: null,
+        latitude: null,
+        longitude: null,
+      };
 
     const cleaned = rawData.startsWith(")]}'") ? rawData.slice(5) : rawData;
     const parsedData = JSON.parse(cleaned);
@@ -33,9 +57,31 @@ function extractData(html: string): ExtractedInfo {
     const kategori = parsedData?.[6]?.[13] ?? [];
     const klaim = parsedData?.[6]?.[49]?.[1] ? true : false;
     const pemilik = parsedData?.[6]?.[57]?.[1] ?? null;
-    return { nama, alamat, website, telepon, kategori, klaim, pemilik };
+    const latitude = parsedData?.[4]?.[0]?.[2] ?? null;
+    const longitude = parsedData?.[4]?.[0]?.[1] ?? null;
+    return {
+      nama,
+      alamat,
+      website,
+      telepon,
+      kategori,
+      klaim,
+      pemilik,
+      latitude,
+      longitude,
+    };
   } catch {
-    return { nama: null, alamat: null, website: null, telepon: null, kategori: [], klaim: false, pemilik: null };
+    return {
+      nama: null,
+      alamat: null,
+      website: null,
+      telepon: null,
+      kategori: [],
+      klaim: false,
+      pemilik: null,
+      latitude: null,
+      longitude: null,
+    };
   }
 }
 
@@ -47,7 +93,7 @@ const scrapeGoogleMaps = playwright<any>({
   run: async ({ data, page }) => {
     // Get the query from input data
     const query: string = data['query'];
-    
+
     // Construct Google Maps search URL from the query
     const searchLink = `https://www.google.com/maps/search/${encodeURIComponent(query)}`;
 
@@ -90,12 +136,15 @@ const scrapeGoogleMaps = playwright<any>({
 
       if (await hasReachedEnd()) {
         await extractLinks();
-        break; }
+        break;
+      }
     }
 
     // 3. Prepare HTTP cookies for got-scraping requests
     const cookiesArr = await page.context().cookies();
-    const cookieHeader = cookiesArr.map((c) => `${c.name}=${c.value}`).join('; ');
+    const cookieHeader = cookiesArr
+      .map((c) => `${c.name}=${c.value}`)
+      .join('; ');
 
     // 4. Fetch each place page concurrently (max 5 at a time) & extract title
     const CONCURRENCY = 5;
@@ -109,15 +158,37 @@ const scrapeGoogleMaps = playwright<any>({
           try {
             const response = await gotScraping({
               url: placeLink,
-              headers: { 
+              headers: {
                 cookie: cookieHeader,
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
+                'User-Agent':
+                  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
               },
               timeout: { request: 12000 },
               retry: { limit: 5 },
             });
-            const { nama, alamat, website, telepon, kategori, klaim, pemilik } = extractData(response.body);
-            return { nama, alamat, website, telepon, kategori, klaim, pemilik, link: placeLink};
+            const {
+              nama,
+              alamat,
+              website,
+              telepon,
+              kategori,
+              klaim,
+              pemilik,
+              latitude,
+              longitude,
+            } = extractData(response.body);
+            return {
+              nama,
+              alamat,
+              website,
+              telepon,
+              kategori,
+              klaim,
+              pemilik,
+              latitude,
+              longitude,
+              link: placeLink,
+            };
           } catch (error: any) {
             return { link: placeLink, error: error.message };
           }
