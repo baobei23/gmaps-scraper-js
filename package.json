@@ -1,8 +1,8 @@
 {
-  "name": "todo-my-app-name",
-  "productName": "Todo My App Name",
-  "description": "Todo my app description",
-  "author": "Todo My Organization Name <todo-my-email@gmail.com>",
+  "name": "bps-scraper",
+  "productName": "BPS Scraper",
+  "description": "Scrape Google Maps data",
+  "author": "Ahmad Reginald Syahiran <reginaldsaja98@gmail.com>",
   "license": "MIT",
   "main": "./.erb/dll/main.bundle.dev.js",
   "scripts": {
