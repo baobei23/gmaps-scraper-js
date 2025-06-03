@@ -137,13 +137,13 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "Todo My App Name",
-    "appId": "com.todo-my-organization-name.todo-my-app-name",
+    "productName": "BPS Scraper",
+    "appId": "com.baobei23.bps-scraper",
     "protocols": [
       {
-        "name": "Todo My App Name",
+        "name": "BPS Scraper",
         "schemes": [
-          "todo-my-app-name"
+          "bps-scraper"
         ]
       }
     ],
